@@ -112,7 +112,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "BrowseCards";
-            this.Text = "BrowseCards";
+            this.Text = "Browse Cards";
             this.Load += new System.EventHandler(this.BrowseCards_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
