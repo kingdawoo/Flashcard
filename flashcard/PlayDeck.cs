@@ -23,12 +23,14 @@ namespace flashcard
             this.currentCardIndex = currentCardIndex;
 
             // Clear the Cards list so it wíll not duplicate the cards
+            // Ta bort kort listan så att kort inte dubblas
             selectedDeck.Cards.Clear();
 
             // Load the cards from the text file
+            // Ladda kort från textfilen
             string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "flashcard\\decks");
             Directory.CreateDirectory(folderPath);
-            string filePath = Path.Combine(folderPath, "cards_" + selectedDeck.Names + ".txt");
+            string filePath = Path.Combine(folderPath, "cards_" + selectedDeck.Name + ".txt");
             string[] lines = File.ReadAllLines(filePath);
             foreach (string line in lines)
             {
@@ -39,6 +41,8 @@ namespace flashcard
                 selectedDeck.AddCard(card);
             }
 
+            // Disable buttons if exceeding index
+            // Inaktivera knappar om överskrider index
             if (currentCardIndex == 0)
             {
                 btnPreviousCard.Enabled = false;
@@ -50,6 +54,7 @@ namespace flashcard
 
 
             // Display the first card in the form
+            // Visa det första kortet i form
             Card currentCard = selectedDeck.Cards[currentCardIndex];
             displayQuestion.Text = currentCard.Question;
             displayAnswer.Text = currentCard.Answer;
@@ -72,12 +77,15 @@ namespace flashcard
         private void btnPreviousCard_Click(object sender, EventArgs e)
         {
             // Check if the current card is the first card in the deck
+            // Kontrollera om det aktuella kortet är det första kortet i leken
             if (currentCardIndex > 0)
             {
                 // Decrement the current card index
+                // Minska det aktuella kort index
                 currentCardIndex--;
 
                 // Display the previous card and fix buttons
+                // Visa föregående kort och fixknappar
                 Card currentCard = selectedDeck.Cards[currentCardIndex];
                 displayQuestion.Text = currentCard.Question;
                 displayAnswer.Text = currentCard.Answer;
@@ -92,12 +100,15 @@ namespace flashcard
         private void btnNextCard_Click(object sender, EventArgs e)
         {
             // Check if the current card is the last card in the deck
+            // Kontrollera om det aktuella kortet är det sista kortet i leken
             if (currentCardIndex < selectedDeck.Cards.Count - 1)
             {
                 // Increment the current card index
+                // Öka det aktuella kort index
                 currentCardIndex++;
 
                 // Display the next card and fix buttons
+                // Visa nästa kort och fixknappar
                 Card currentCard = selectedDeck.Cards[currentCardIndex];
                 displayQuestion.Text = currentCard.Question;
                 displayAnswer.Text = currentCard.Answer;

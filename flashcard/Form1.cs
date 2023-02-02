@@ -16,12 +16,15 @@ namespace flashcard
     {
 
         // Reference to "BrowseCards" form
+        // Referens till form "BrowseCards".
         public BrowseCards browseCardsForm;
 
         // List to hold decks
+        // Lista som håller korthållare
         private List<Deck> decks = new List<Deck>();
 
         // Currently selected deck
+        // För närvarande valt däck
         private Deck selectedDeck;
 
         public DeckMenu()
@@ -30,6 +33,8 @@ namespace flashcard
             notSelected();
         }
 
+        // Method if decks are or are not picked
+        // Metoder ifall korthållare är eller inte är vald
         public void isSelected()
         {
             btnDeleteDeck.Enabled = true;
@@ -58,12 +63,13 @@ namespace flashcard
             dataGridView1.Rows.Clear();
 
             // Add each deck in list of decks to data grid view
+            // Lägg till varje korthållare i listan över korthållare till data grid view
             foreach (Deck deck in decks)
             {
                 int index = dataGridView1.Rows.Add();
                 DataGridViewRow row = dataGridView1.Rows[index];
                 row.Cells["Id"].Value = deck.Id;
-                row.Cells["Names"].Value = deck.Names;
+                row.Cells["Names"].Value = deck.Name;
             }
 
             txtDeckName.Clear();
@@ -75,6 +81,7 @@ namespace flashcard
             try
             {
                 // Throw error if no user input
+                // Kasta error ifall ingen användarinmatning
                 if (string.IsNullOrEmpty(txtDeckName.Text))
                 {
                     MessageBox.Show("Name for deck missing, try again!", "Error message: No deck name",
@@ -85,10 +92,12 @@ namespace flashcard
                     string deckName = txtDeckName.Text;
 
                     // Create new deck with user-specified name
+                    // Skapa ny korthållare med användar-specifierad namn
                     Deck newDeck = new Deck(decks, deckName);
                     decks.Add(newDeck);
 
                     // Place the txt file in specialfolder
+                    // Placera txt filen i specialfolder
                     string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "flashcard\\decks");
                     Directory.CreateDirectory(folderPath);
                     string filePath = Path.Combine(folderPath, "cards_" + deckName + ".txt");
@@ -108,27 +117,32 @@ namespace flashcard
         private void btnDeleteDeck_Click(object sender, EventArgs e)
         {
             // Check if a deck is selected in the data grid view
+            // Checka ifall korthållare är vald i data grid view
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 try
                 {
                     // Get selected deck from data grid view
+                    // Få vald korthållare från data grid view
                     DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
                     int deckId = (int)selectedRow.Cells["Id"].Value;
-                    selectedDeck = decks.First(d => d.Id == deckId);
+                    selectedDeck = decks.First(decks => decks.Id == deckId);
 
                     // Remove selected deck from list of decks
+                    // Ta bort vald korthållare från listan av korthållare
                     decks.Remove(selectedDeck);
 
                     // Update Ids of remaining decks in the list
+                    // Uppdatera Id av återstående korthållare i listan
                     for (int i = 0; i < decks.Count; i++)
                     {
                         decks[i].Id = i + 1;
                     }
 
                     // Delete the text file for the selected deck
+                    // Radera text filen för vald korthållare
                     string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "flashcard\\decks");
-                    string filePath = Path.Combine(folderPath, "cards_" + selectedDeck.Names + ".txt");
+                    string filePath = Path.Combine(folderPath, "cards_" + selectedDeck.Name + ".txt");
 
                     // Garbage collection
                     System.GC.Collect();
@@ -137,6 +151,7 @@ namespace flashcard
                     File.Delete(filePath);
 
                     // Update data grid view to show updated list of decks
+                    // Uppdatera data grid view för att visa uppdaterad lista över korthållare
                     UpdateDataGridView();
                     notSelected();
                 }
@@ -149,7 +164,6 @@ namespace flashcard
             } 
             else
             {
-                // Throw error message if deck is not selected
                 MessageBox.Show("Please select a deck and try again!", "Error message: Deck not selected",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -158,30 +172,29 @@ namespace flashcard
 
         private void btnBrowseDeck_Click(object sender, EventArgs e)
         {            
-            // Check if a deck is selected in the data grid view
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 try
                 {
-                    // Get selected deck from data grid view
                     DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
                     int deckId = (int)selectedRow.Cells["Id"].Value;
-                    selectedDeck = decks.First(d => d.Id == deckId);
+                    selectedDeck = decks.First(decks => decks.Id == deckId);
 
-                    // Create a new instance of the "BrowseCards" form and show it
+                    // Create a new instance of the "BrowseCards" form and show
+                    // // Skapa en ny instans av "BrowseCards"-form och visa den
                     browseCardsForm = new BrowseCards(selectedDeck);
                     browseCardsForm.Show();
                 }
                 catch (NullReferenceException)
                 {
                     // Throw specific exception if deck selected is null
+                    // Kasta specifikt undantag om det valda korthållare är null
                     MessageBox.Show("Please select a created deck and try again!", "Error message: Null deck",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             } 
             else
             {
-                // Throw error message if deck is not selected
                 MessageBox.Show("Please select a deck and try again!", "Error message: Deck not selected",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -194,28 +207,27 @@ namespace flashcard
             {
                 try
                 {
-                    // Get selected deck from data grid view
                     DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
                     int deckId = (int)selectedRow.Cells["Id"].Value;
-                    selectedDeck = decks.First(d => d.Id == deckId);
+                    selectedDeck = decks.First(decks => decks.Id == deckId);
 
                     // Create a new instance of the "AddCard" form and show it
+                    // Skapa en ny instans av "AddCard"-formuläret och visa den
                     AddCard addCardForm = new AddCard(selectedDeck, browseCardsForm);
                     addCardForm.ShowDialog();
 
                     // Update data grid view to show cards for the selected deck
+                    // Uppdatera data grid view för att visa kort för vald korthållare
                     UpdateDataGridView();
                 }
                 catch (NullReferenceException)
                 {
-                    // Throw specific exception if deck selected is null
                     MessageBox.Show("Please select a created deck and try again!", "Error message: Null deck",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                // Throw error message if deck is not selected
                 MessageBox.Show("Please select a deck and try again!", "Error message: Deck not selected",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -224,23 +236,21 @@ namespace flashcard
 
         private void btnPlayDeck_Click(object sender, EventArgs e)
         {
-            // Check if a deck is selected in the data grid view
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 try
                 {
-                    // Get selected deck from data grid view
                     DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
                     int deckId = (int)selectedRow.Cells["Id"].Value;
-                    Deck selectedDeck = decks.First(d => d.Id == deckId);
+                    Deck selectedDeck = decks.First(decks => decks.Id == deckId);
 
                     // Open the play deck form and pass it the selected deck
+                    // Öppna form för att spela korthållare och skicka det till den valda kortleken
                     PlayDeck playDeckForm = new PlayDeck(selectedDeck, 0);
                     playDeckForm.ShowDialog();
                 }
                 catch (NullReferenceException)
                 {
-                    // Throw exception if deck selected is null
                     MessageBox.Show("Please select a created deck and try again!", "Error message: Null deck",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -252,7 +262,6 @@ namespace flashcard
             }
             else
             {
-                // Throw error message if deck is not selected
                 MessageBox.Show("Please select a deck and try again!", "Error message",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -263,23 +272,29 @@ namespace flashcard
             try
             {
                 // Get all txt files in the specified file path
+                // Hämta alla txt-filer i den angivna sökvägen
                 string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "flashcard\\decks");
                 string[] files = Directory.GetFiles(folderPath, "*.txt");
 
                 // Iterate through each file
+                // Iterera genom varje fil
                 foreach (string file in files)
                 {
                     // Get the name of the file (which is the name of the deck)
+                    // Hämta namnet på filen (som är namnet på kortleken)
                     string deckName = Path.GetFileNameWithoutExtension(file).Replace("cards_", "");
 
                     // Create a new deck with the name
+                    // Skapa ett nytt kortlek med namn
                     Deck newDeck = new Deck(decks, deckName);
 
                     // Add the new deck to the list of decks
+                    // Lägg till den nya kortleken till listan över kortlekar
                     decks.Add(newDeck);
                 }
 
                 // Update the data grid view to show the loaded decks
+                // Uppdatera data grid view för att visa laddade kortlekar
                 UpdateDataGridView();
             }
             catch (System.IO.DirectoryNotFoundException)
@@ -291,6 +306,7 @@ namespace flashcard
         private void btnEditDeck_Click(object sender, EventArgs e)
         {
             // Check if a deck is selected in the data grid view
+            // Checka ifall kortlek är vald i data grid view
             if (string.IsNullOrEmpty(txtDeckName.Text))
             {
                 MessageBox.Show("Please give the deck a name!", "Error message: No input",
@@ -302,32 +318,30 @@ namespace flashcard
                 {
                     string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "flashcard\\decks");
 
-                    // Get selected deck from data grid view
                     DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
                     int deckId = (int)selectedRow.Cells["Id"].Value;
-                    selectedDeck = decks.First(d => d.Id == deckId);
+                    selectedDeck = decks.First(decks => decks.Id == deckId);
 
                     // Garbage collection
                     System.GC.Collect();
                     System.GC.WaitForPendingFinalizers();
 
                     // Rename file
-                    System.IO.File.Move(Path.Combine(folderPath, "cards_" + selectedDeck.Names + ".txt"), Path.Combine(folderPath, "cards_" + txtDeckName.Text + ".txt"));
-                    selectedDeck.Names = txtDeckName.Text;
+                    // Döp om filen
+                    System.IO.File.Move(Path.Combine(folderPath, "cards_" + selectedDeck.Name + ".txt"), Path.Combine(folderPath, "cards_" + txtDeckName.Text + ".txt"));
+                    selectedDeck.Name = txtDeckName.Text;
                     UpdateDataGridView();
                     notSelected();
 
                 }
                 catch (NullReferenceException)
                 {
-                    // Throw specific exception if deck selected is null
                     MessageBox.Show("Please select a created deck and try again!", "Error message: Null deck",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                // Throw error message if deck is not selected
                 MessageBox.Show("Please select a deck and try again!", "Error message: Deck not selected",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                 isSelected();
@@ -347,6 +361,8 @@ namespace flashcard
                 MessageBoxButtons.OK, MessageBoxIcon.Question);
         }
 
+
+        // * Data grid view hantering *
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             notSelected();
